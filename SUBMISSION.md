@@ -20,7 +20,7 @@ Demo-only accounts on reserved `.test` addresses (no real inboxes). Both were ve
 
 Alice owns **"Welcome to Paperflow"**, which is shared with Bob as a viewer.
 
-> **Self sign-up:** creating a new account works without an email step only when "Confirm email" is disabled in the Supabase project. *(Needs confirmation by the submitter: on 2026-10-27 it was still enabled.)* The demo accounts above work either way.
+You can also **create your own account** on the sign-in page. Email confirmation is disabled, so you are signed in immediately (verified on the live app, 2026-10-27).
 
 **Suggested 3-minute check**
 1. Sign in as Alice → **+ New document** → set a title and format text (heading, font, size, bold/underline, lists, alignment, indent) → wait for *All changes saved* → reload; everything persists.
@@ -53,6 +53,7 @@ Alice owns **"Welcome to Paperflow"**, which is shared with Bob as a viewer.
 | `npm run build` | ✅ passes |
 | Browser end-to-end run against the **deployed** app (sign-in, create, format, reload persistence, import, share, viewer read-only, unshared-doc denial, editor upgrade, 390 px layout) | ✅ **26/26 checks** |
 | Database audit | ✅ RLS on all tables; anonymous role has no table access or function execute; signed-in users cannot change `owner_id`, retarget shares, or insert shares directly |
+| Self sign-up on the live app | ✅ New account is signed in immediately (email confirmation disabled; checked via the Supabase auth settings endpoint) |
 | Secrets audit | ✅ No `.env` files or keys in git history; Vercel holds only the two public `NEXT_PUBLIC_SUPABASE_*` variables |
 
 *Test count history:* earlier drafts of these docs said 29, then 39. Those were accurate when written; tests were added for the formatting toolbar, the import fix, and share-dialog feedback. **41** is the current verified count.
@@ -66,7 +67,7 @@ The browser E2E script was run manually (playwright-core with Edge) and is not c
 - **Search covers titles only**, not document content.
 - **Import:** client-side conversion of `.txt`/`.md` only. Markdown images, raw HTML, and relative links are dropped or turned into plain text.
 - **Not included:** ownership transfer, folders, version history, comments.
-- **Supabase free tier:** the project pauses after about a week of inactivity, and the built-in mailer only delivers to project team members (relevant only if "Confirm email" is enabled).
+- **Supabase free tier:** the project pauses after about a week of inactivity. Email confirmation is disabled for this demo, so sign-up does not verify email ownership.
 
 ## Next steps (another 2–4 hours)
 

@@ -3,7 +3,7 @@
 A lightweight collaborative document editor: create, format, import, and share documents, with access enforced by PostgreSQL Row Level Security.
 
 **Live app:** https://paperflow-five-psi.vercel.app
-**Demo accounts:** `alice@paperflow.test` / `bob@paperflow.test`, password `Paperflow-Demo-2026`. You can also create your own account; this skips the email step only when "Confirm email" is disabled in Supabase (see setup step 2).
+**Demo accounts:** `alice@paperflow.test` / `bob@paperflow.test`, password `Paperflow-Demo-2026`. You can also create your own account; email confirmation is disabled on the live project, so you're signed in immediately.
 
 ![Editor](docs/screenshots/02-editor.png)
 

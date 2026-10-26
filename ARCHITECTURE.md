@@ -67,7 +67,7 @@ Additional hardening:
 - **Sharing is limited to existing accounts.** No invitation emails. The trade-off is that the "No Paperflow account uses that email" message lets an authenticated user learn whether an email is registered. That was accepted for usability; rate limiting would be the next mitigation.
 - **`cacheComponents` disabled.** The scaffold enabled it, but every route is per-user and cookie-authenticated, so there is no shared static shell to cache, and caching would add a cross-user staleness risk.
 - **Search covers titles only** (`ILIKE` with escaped wildcards). Full-text search over content would need a generated `tsvector` column.
-- **Email + password auth.** It's the simplest flow that works for two-account testing. For frictionless reviewer sign-up, "Confirm email" should be disabled in the Supabase project, because Supabase's default mailer only delivers to project team members. When it is enabled, sign-up uses the PKCE email-confirmation flow handled by `/auth/callback`.
+- **Email + password auth.** It's the simplest flow that works for two-account testing. "Confirm email" is disabled in the live Supabase project so reviewers can sign up instantly (Supabase's default mailer only delivers to project team members); the trade-off is that email ownership isn't verified. If it is re-enabled, sign-up uses the PKCE email-confirmation flow handled by `/auth/callback`.
 
 ## Scope cuts
 
