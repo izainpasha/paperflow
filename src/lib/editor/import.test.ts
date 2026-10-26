@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { validateDocumentContent } from "@/lib/validation";
@@ -44,14 +44,22 @@ describe("markdownToDoc", () => {
     expect(validateDocumentContent(doc).ok).toBe(true);
   });
 
-  it.each(["README.md", "SUBMISSION.md", "ARCHITECTURE.md", "AI_WORKFLOW.md"])(
-    "imports this repo's %s into valid content (tables, relative links, code)",
-    (file) => {
-      const doc = markdownToDoc(readFileSync(resolve(import.meta.dirname, "../../..", file), "utf8"));
-      expect(isDocEmpty(doc)).toBe(false);
-      expect(validateDocumentContent(doc)).toMatchObject({ ok: true });
-    },
-  );
+  // The project's own Markdown docs are realistic input: tables, relative links, code blocks.
+  const ROOT = resolve(import.meta.dirname, "../../..");
+  const CORE_DOCS = ["README.md", "ARCHITECTURE.md", "AI_WORKFLOW.md"];
+  const importDoc = (file: string) => {
+    const doc = markdownToDoc(readFileSync(resolve(ROOT, file), "utf8"));
+    expect(isDocEmpty(doc), file).toBe(false);
+    expect(validateDocumentContent(doc), file).toMatchObject({ ok: true });
+  };
+
+  it.each(CORE_DOCS)("imports this repo's %s into valid content", importDoc);
+
+  it("imports any other Markdown docs at the project root (e.g. SUBMISSION.md) into valid content", () => {
+    readdirSync(ROOT)
+      .filter((f) => f.endsWith(".md") && !CORE_DOCS.includes(f))
+      .forEach(importDoc);
+  });
 
   it("returns plain objects that survive Server Action serialisation", () => {
     const doc = markdownToDoc("# Title\n");
