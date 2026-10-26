@@ -38,7 +38,7 @@ The project uses very recent majors (Next.js 16.4, React 19.3, Tiptap 3.32, @sup
 | `npm run test:integration` (live Supabase, two real users, public key only) | 7/7 passing |
 | `npm run build` | passing |
 | Browser E2E (Edge via playwright-core, script kept outside the repo) against the local production build | 25/25 checks |
-| Same E2E against the deployed Vercel URL | see SUBMISSION.md for the final run |
+| Same E2E against the deployed Vercel URL | 26/26 checks (an early run failed one step because the test waited a fixed 1.5 s for a permission change; it now waits for the recipient to see "Can edit") |
 
 The E2E checks covered: route guard; wrong-password error; create; rename; H1/bold/underline/bullets; autosave status; persistence after reload; unknown-email and duplicate share handling; `.pdf` rejection; `.md` import preserving structure; title search; recipient sees "Shared with Me" with owner and badge; viewer is read-only with no toolbar or share button; recipient gets "Document not available" for a private doc's URL; upgrading to editor lets the recipient's edit reach the owner; no horizontal overflow at 390px. Screenshots from these runs are in `docs/screenshots/`.
 
