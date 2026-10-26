@@ -71,4 +71,4 @@ Additional hardening:
 
 ## Scope cuts
 
-Real-time collaboration and presence, comments, version history, `.docx` import/export, invitation emails for non-users, ownership transfer, folders, and full-text content search are all out of scope. See SUBMISSION.md for next steps.
+Real-time collaboration and presence, comments, version history, `.docx` import/export, invitation emails for non-users, ownership transfer, folders, and full-text content search are all out of scope. Next steps are listed in [SUBMISSION.md](https://github.com/izainpasha/paperflow/blob/main/SUBMISSION.md) in the GitHub repository.
