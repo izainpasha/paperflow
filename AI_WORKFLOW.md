@@ -29,7 +29,9 @@ The project uses very recent majors (Next.js 16.4, React 19.3, Tiptap 3.32, @sup
 5. **Import rejected real-world Markdown (found by me during manual testing).** Importing `SUBMISSION.md` failed with "links must use http, https or mailto": the editor accepted relative links like `[VIDEO_URL.txt](VIDEO_URL.txt)`, but the server allow-list (correctly) did not. Fix: the editor's link rule now uses the same `SAFE_HREF` regex as the server, so relative links import as plain text. A client-side `normalizeContent()` strips any other unsupported values (e.g. a pasted "Comic Sans" font) before saving instead of blocking autosave. A regression test imports every Markdown file in this repo.
 6. **Toolbar scope expanded after my review.** The first toolbar covered only the spec's minimum. I asked for font selection, indentation, and more. The agent added Tiptap's official text-style/text-align extensions plus a small custom paragraph-indent extension (Tiptap only ships list nesting), with every style value allow-listed on the server so formatting can't be used to inject CSS.
 7. **A deploy failed on a test-file type error** that `vitest` didn't catch (Vitest doesn't type-check; `next build` does). The failed Vercel build left the previous version serving; it was fixed and redeployed, and `npm run check` includes `typecheck` for this reason.
-8. **Infrastructure fixes.** The direct Postgres host is IPv6-only and unreachable from the dev network, so the migration was applied through Supabase's IPv4 session pooler. The pasted connection string also still had the template's `[ ]` around the password.
+8. **A live RLS test went stale (found in the final audit).** "Profiles are not enumerable" asserted that Bob could see only himself. After a demo document was shared from Alice to Bob, Bob legitimately sees Alice's email, so the test failed. A database check confirmed nothing was leaking. The test now asserts the actual rule (you see yourself plus the people you share with), derived from live data.
+9. **A wrong documentation claim (found in the final audit).** The docs said email confirmation was disabled; querying the Supabase auth settings showed it was still enabled. The docs were corrected to state the requirement instead of asserting it.
+10. **Infrastructure fixes.** The direct Postgres host is IPv6-only and unreachable from the dev network, so the migration was applied through Supabase's IPv4 session pooler. The pasted connection string also still had the template's `[ ]` around the password.
 
 ## How correctness and UX were verified
 
@@ -37,7 +39,7 @@ The project uses very recent majors (Next.js 16.4, React 19.3, Tiptap 3.32, @sup
 |---|---|
 | `npm run lint` | clean |
 | `npm run typecheck` (strict) | clean |
-| `npm test` | 39 unit/component tests passing |
+| `npm test` | 41 unit/component tests passing (earlier revisions of this file said 29, then 39; tests were added as features were added) |
 | `npm run test:integration` (live Supabase, two real users, public key only) | 7/7 passing |
 | `npm run build` | passing |
 | Browser E2E (Edge via playwright-core, script kept outside the repo) against the local production build | 25/25 checks |

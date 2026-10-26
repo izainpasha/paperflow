@@ -123,8 +123,22 @@ describe.skipIf(!configured)("RLS: document access is enforced by the database",
     expect(self.data).toBe("cannot_share_with_self");
   });
 
-  it("profiles are not enumerable by unrelated users", async () => {
-    const { data } = await bob.from("profiles").select("id, email");
-    expect((data ?? []).map((p) => p.id)).toEqual([bobId]);
+  it("profiles are visible only to yourself and people you share documents with", async () => {
+    // Expected set derived from Bob's own sharing relationships (other data in the
+    // project, e.g. a demo doc Alice shared with Bob, legitimately widens it).
+    const [{ data: visibleDocs }, { data: visibleShares }, { data: profiles }] = await Promise.all([
+      bob.from("documents").select("owner_id"),
+      bob.from("document_shares").select("shared_with_user_id"),
+      bob.from("profiles").select("id"),
+    ]);
+    const expected = new Set<string>([bobId]);
+    for (const d of visibleDocs ?? []) expected.add(d.owner_id);
+    for (const s of visibleShares ?? []) expected.add(s.shared_with_user_id);
+
+    const seen = new Set((profiles ?? []).map((p) => p.id));
+    expect(seen).toEqual(expected);
+    // Anonymous callers see no profiles at all.
+    const anonProfiles = await anon.from("profiles").select("id");
+    expect(anonProfiles.data ?? []).toEqual([]);
   });
 });

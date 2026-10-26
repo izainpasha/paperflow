@@ -47,7 +47,7 @@ describe("markdownToDoc", () => {
   it.each(["README.md", "SUBMISSION.md", "ARCHITECTURE.md", "AI_WORKFLOW.md"])(
     "imports this repo's %s into valid content (tables, relative links, code)",
     (file) => {
-      const doc = markdownToDoc(readFileSync(resolve(__dirname, "../../..", file), "utf8"));
+      const doc = markdownToDoc(readFileSync(resolve(import.meta.dirname, "../../..", file), "utf8"));
       expect(isDocEmpty(doc)).toBe(false);
       expect(validateDocumentContent(doc)).toMatchObject({ ok: true });
     },

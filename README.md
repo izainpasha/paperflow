@@ -3,7 +3,7 @@
 A lightweight collaborative document editor: create, format, import, and share documents, with access enforced by PostgreSQL Row Level Security.
 
 **Live app:** https://paperflow-five-psi.vercel.app
-**Demo accounts:** `alice@paperflow.test` / `bob@paperflow.test`, password `Paperflow-Demo-2026` (or create your own account; no email confirmation is needed).
+**Demo accounts:** `alice@paperflow.test` / `bob@paperflow.test`, password `Paperflow-Demo-2026`. You can also create your own account; this skips the email step only when "Confirm email" is disabled in Supabase (see setup step 2).
 
 ![Editor](docs/screenshots/02-editor.png)
 
@@ -57,12 +57,16 @@ Sign in as `alice@…` in one browser and `bob@…` in a private window (or crea
 
 ## Tests
 
+Current verified totals: **41 unit/component tests** (`npm test`) and **7 live RLS integration tests** (`npm run test:integration`).
+
+
 - `src/lib/validation.test.ts`: title/email rules, Tiptap content allow-list (rejects `script` nodes, `javascript:` links, oversized or deeply nested docs), import file validation.
 - `src/lib/editor/import.test.ts`: `.txt` paragraphs and line breaks, Markdown → headings/marks/lists, XSS payloads stripped, output serialisable for Server Actions.
 - `src/components/editor/use-autosave.test.ts`: debounce and patch merging, retry after failure, edits made during an in-flight save.
 - `src/components/editor/toolbar.test.tsx`: toolbar applies bold/underline/headings/lists/font/size/alignment/indent to a real Tiptap editor; formatting round-trips through JSON.
 - `src/lib/editor/formatting.test.ts`: style values outside the allow-list (CSS injection via font names, unknown sizes, colours) are rejected by the server and normalised away on the client.
 - `src/components/import-button.test.tsx`: UI rejects unsupported and empty files; imports Markdown and navigates to the new document.
+- `src/components/editor/share-panel.test.tsx`: changing a permission shows *Saving…* → *✓ Saved*, locks the row while saving, and rolls back with an error on failure.
 - `tests/integration/rls.test.ts`: against the real database, with only the public key: strangers can't read, update, delete, or share by ID; viewer vs. editor rights; owner can't be changed; revocation; unknown-user and self-share handling; profiles aren't enumerable.
 
 A browser end-to-end run (sign in, create, format, reload, import, share, recipient access, private-doc denial, mobile layout) was also performed against the deployed app; see [AI_WORKFLOW.md](AI_WORKFLOW.md).
