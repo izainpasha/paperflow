@@ -33,11 +33,19 @@ export function textToDoc(text: string): JSONContent {
  */
 export function markdownToDoc(markdown: string): JSONContent {
   const html = marked.parse(markdown, { async: false, gfm: true, breaks: false });
-  return generateJSON(html, editorExtensions);
+  return toPlainJson(generateJSON(html, editorExtensions));
 }
 
 export function fileTextToDoc(text: string, kind: ImportKind): JSONContent {
   return kind === "md" ? markdownToDoc(text) : textToDoc(text);
+}
+
+/**
+ * ProseMirror attrs are not plain objects, and React serialises non-plain objects passed to
+ * Server Actions as opaque temporary references ("$T") rather than data. Always send a plain copy.
+ */
+export function toPlainJson(doc: JSONContent): JSONContent {
+  return JSON.parse(JSON.stringify(doc)) as JSONContent;
 }
 
 /** True when the converted document has no visible text. */

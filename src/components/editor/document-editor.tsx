@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { deleteDocument, updateDocument } from "@/app/actions/documents";
 import { RoleBadge } from "@/components/role-badge";
 import { editorExtensions } from "@/lib/editor/extensions";
+import { toPlainJson } from "@/lib/editor/import";
 import type { DocumentDetail } from "@/lib/types";
 import { DEFAULT_TITLE, TITLE_MAX_LENGTH } from "@/lib/validation";
 import { SharePanel } from "./share-panel";
@@ -53,7 +54,7 @@ export function DocumentEditor({ doc }: { doc: DocumentDetail }) {
         "aria-multiline": "true",
       },
     },
-    onUpdate: ({ editor: e }) => schedule({ content: e.getJSON() }),
+    onUpdate: ({ editor: e }) => schedule({ content: toPlainJson(e.getJSON()) }),
   });
 
   // Ctrl/Cmd+S saves immediately instead of opening the browser's save dialog.

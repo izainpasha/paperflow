@@ -32,6 +32,12 @@ describe("textToDoc", () => {
 });
 
 describe("markdownToDoc", () => {
+  it("returns plain objects that survive Server Action serialisation", () => {
+    const doc = markdownToDoc("# Title\n");
+    const attrs = doc.content?.[0].attrs;
+    expect(Object.getPrototypeOf(attrs)).toBe(Object.prototype);
+  });
+
   it("maps headings, emphasis and lists to editor nodes", () => {
     const doc = markdownToDoc("# Plan\n\nSome **bold** and *italic* text.\n\n- one\n- two\n\n1. first\n2. second\n");
     const types = doc.content?.map((n) => n.type);
