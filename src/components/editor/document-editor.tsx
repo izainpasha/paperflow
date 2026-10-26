@@ -92,11 +92,19 @@ export function DocumentEditor({ doc }: { doc: DocumentDetail }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/95 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3 md:px-6">
-          <Link href="/documents" className="text-sm text-slate-500 hover:text-slate-900" aria-label="Back to documents">
-            ← Documents
+        {/* Mobile: [← title Share 🗑] then a slim status row. Desktop: one row. */}
+        <div className="flex flex-wrap items-center gap-x-1 gap-y-0.5 px-2 py-2 md:gap-x-3 md:px-6 md:py-3">
+          <Link
+            href="/documents"
+            aria-label="Back to documents"
+            className="grid h-9 min-w-9 place-items-center rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-900 md:h-auto md:px-2 md:text-sm"
+          >
+            <span>
+              <span aria-hidden>←</span>
+              <span className="ml-1 hidden md:inline">Documents</span>
+            </span>
           </Link>
-          <div className="order-last w-full min-w-0 md:order-none md:w-auto md:flex-1">
+          <div className="min-w-0 flex-1">
             <label htmlFor="doc-title" className="sr-only">
               Document title
             </label>
@@ -107,10 +115,10 @@ export function DocumentEditor({ doc }: { doc: DocumentDetail }) {
               maxLength={TITLE_MAX_LENGTH}
               onChange={(e) => onTitleChange(e.target.value)}
               onBlur={onTitleBlur}
-              className="w-full truncate rounded-md border border-transparent px-2 py-1 text-lg font-semibold text-slate-900 hover:border-slate-200 focus:border-blue-500 focus:outline-none read-only:hover:border-transparent"
+              className="w-full truncate rounded-md border border-transparent px-2 py-1 text-base font-semibold text-slate-900 hover:border-slate-200 focus:border-blue-500 focus:outline-none read-only:hover:border-transparent md:text-lg"
             />
           </div>
-          <div className="ml-auto flex items-center gap-3">
+          <div className="order-last flex w-full items-center gap-2 pb-1 pl-11 md:order-none md:w-auto md:gap-3 md:pb-0 md:pl-0">
             {canEdit && (
               <span
                 role="status"
@@ -123,25 +131,41 @@ export function DocumentEditor({ doc }: { doc: DocumentDetail }) {
               </span>
             )}
             <RoleBadge role={doc.role} />
-            {isOwner && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => setShareOpen(true)}
-                  className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700"
-                >
-                  Share
-                </button>
-                <button
-                  type="button"
-                  onClick={() => void onDelete()}
-                  className="rounded-lg px-2 py-1.5 text-sm text-slate-500 hover:bg-red-50 hover:text-red-700"
-                >
-                  Delete
-                </button>
-              </>
-            )}
           </div>
+          {isOwner && (
+            <>
+              <button
+                type="button"
+                onClick={() => setShareOpen(true)}
+                className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                Share
+              </button>
+              <button
+                type="button"
+                onClick={() => void onDelete()}
+                aria-label="Delete document"
+                title="Delete document"
+                className="grid h-9 min-w-9 place-items-center rounded-lg text-sm text-slate-500 hover:bg-red-50 hover:text-red-700 md:h-auto md:px-2 md:py-1.5"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  width="18"
+                  height="18"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={1.8}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                  className="md:hidden"
+                >
+                  <path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 002 2h6a2 2 0 002-2l1-12M9 7V4h6v3" />
+                </svg>
+                <span className="hidden md:inline">Delete</span>
+              </button>
+            </>
+          )}
         </div>
         {autosave.status === "error" && (
           <div role="alert" className="flex items-center gap-3 bg-red-50 px-4 py-2 text-sm text-red-700 md:px-6">
@@ -159,8 +183,8 @@ export function DocumentEditor({ doc }: { doc: DocumentDetail }) {
         {canEdit && editor && <Toolbar editor={editor} />}
       </header>
 
-      <main className="flex-1 px-4 py-6 md:px-6 md:py-10">
-        <div className="mx-auto max-w-3xl rounded-xl border border-slate-200 bg-white px-6 py-8 shadow-sm md:px-12 md:py-12">
+      <main className="flex flex-1 flex-col bg-white md:block md:bg-transparent md:px-6 md:py-10">
+        <div className="mx-auto w-full max-w-3xl flex-1 bg-white px-4 py-5 md:rounded-xl md:border md:border-slate-200 md:px-12 md:py-12 md:shadow-sm">
           {editor ? (
             <EditorContent editor={editor} />
           ) : (
@@ -171,7 +195,9 @@ export function DocumentEditor({ doc }: { doc: DocumentDetail }) {
           )}
         </div>
         {!isOwner && doc.ownerEmail && (
-          <p className="mx-auto mt-3 max-w-3xl text-xs text-slate-500">Owned by {doc.ownerEmail}</p>
+          <p className="mx-auto max-w-3xl px-4 pb-4 text-xs text-slate-500 md:mt-3 md:px-0 md:pb-0">
+            Owned by {doc.ownerEmail}
+          </p>
         )}
       </main>
 

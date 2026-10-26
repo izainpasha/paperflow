@@ -117,7 +117,8 @@ export function Toolbar({ editor }: { editor: Editor }) {
     <div
       role="toolbar"
       aria-label="Formatting"
-      className="flex flex-wrap items-center gap-1 border-b border-slate-200 bg-white px-2 py-1.5"
+      // Mobile: one swipeable row (like mobile Docs). Desktop: wraps.
+      className="flex items-center gap-1 overflow-x-auto border-t border-slate-100 bg-white px-2 py-1.5 [scrollbar-width:none] md:flex-wrap md:overflow-visible [&>*]:shrink-0"
     >
       <label htmlFor="block-type" className="sr-only">
         Text style
@@ -136,7 +137,7 @@ export function Toolbar({ editor }: { editor: Editor }) {
         id="font-family"
         value={knownFamily ? state.fontFamily : ""}
         onChange={(e) => (e.target.value ? chain().setFontFamily(e.target.value).run() : chain().unsetFontFamily().run())}
-        className={`${selectClass} w-36`}
+        className={`${selectClass} w-32 md:w-36`}
       >
         {FONT_FAMILIES.map((f) => (
           <option key={f.label} value={f.value} style={f.value ? { fontFamily: f.value } : undefined}>
