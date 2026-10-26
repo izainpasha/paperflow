@@ -10,8 +10,8 @@ A lightweight collaborative document editor: create, format, import, and share d
 ## Features
 
 - **Documents**: create, rename (inline title), edit, delete (owner only); autosave with a visible status (`Unsaved changes` → `Saving…` → `All changes saved`, or `Not saved` + Retry). `Ctrl/Cmd+S` saves immediately, and you're warned before leaving with unsaved changes.
-- **Rich text** (Tiptap): bold, italic, underline, Normal / Heading 1–3, bulleted and numbered lists, undo/redo. Content is stored as Tiptap JSON, so formatting and structure survive reloads.
-- **Import**: **`.txt` and `.md` files only, up to 1 MB.** Each import creates a new editable document titled from the file name. Markdown headings, emphasis, lists, links, quotes, and code are converted; raw HTML, images, and scripts are dropped. Unsupported, empty, or oversized files show a clear error. `.docx` is **not** supported.
+- **Rich text** (Tiptap): Normal / Heading 1–3, font family, font size, bold, italic, underline, strikethrough, left/center/right/justify alignment, bulleted and numbered lists, indent/outdent (toolbar or `Tab` / `Shift+Tab`, nests list items or indents paragraphs), block quotes, clear formatting, undo/redo. Content is stored as Tiptap JSON, so formatting and structure survive reloads. Fonts, sizes, alignments, and indent levels come from a fixed allow-list, which the server enforces too.
+- **Import**: **`.txt` and `.md` files only, up to 1 MB.** Each import creates a new editable document titled from the file name. Markdown headings, emphasis, lists, absolute links, quotes, and code are converted. Relative links (e.g. `README.md`) become plain text; raw HTML, images, and scripts are dropped. Unsupported, empty, or oversized files show a clear error. `.docx` is **not** supported.
 - **Sharing**: the owner shares by email with an **existing** Paperflow user as **Can edit** or **Can view**, and can change or revoke access. The sidebar separates *All Documents*, *My Documents*, and *Shared with Me*, and badges show owner vs. shared access.
 - **Dashboard**: title search, empty, loading, and error states, responsive down to phone width.
 
@@ -60,7 +60,8 @@ Sign in as `alice@…` in one browser and `bob@…` in a private window (or crea
 - `src/lib/validation.test.ts`: title/email rules, Tiptap content allow-list (rejects `script` nodes, `javascript:` links, oversized or deeply nested docs), import file validation.
 - `src/lib/editor/import.test.ts`: `.txt` paragraphs and line breaks, Markdown → headings/marks/lists, XSS payloads stripped, output serialisable for Server Actions.
 - `src/components/editor/use-autosave.test.ts`: debounce and patch merging, retry after failure, edits made during an in-flight save.
-- `src/components/editor/toolbar.test.tsx`: toolbar applies bold/underline/headings/lists to a real Tiptap editor; formatting round-trips through JSON.
+- `src/components/editor/toolbar.test.tsx`: toolbar applies bold/underline/headings/lists/font/size/alignment/indent to a real Tiptap editor; formatting round-trips through JSON.
+- `src/lib/editor/formatting.test.ts`: style values outside the allow-list (CSS injection via font names, unknown sizes, colours) are rejected by the server and normalised away on the client.
 - `src/components/import-button.test.tsx`: UI rejects unsupported and empty files; imports Markdown and navigates to the new document.
 - `tests/integration/rls.test.ts`: against the real database, with only the public key: strangers can't read, update, delete, or share by ID; viewer vs. editor rights; owner can't be changed; revocation; unknown-user and self-share handling; profiles aren't enumerable.
 

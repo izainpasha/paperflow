@@ -29,21 +29,22 @@ You can also create your own account on the sign-in page. Email confirmation is 
 | Requirement | Status |
 |---|---|
 | Create, rename, edit, save, reopen documents | ✅ Autosave with status, retry on failure, unsaved-changes warning |
-| Bold, italic, underline, headings (H1–H3), bulleted and numbered lists | ✅ Stored as Tiptap JSON; persists across reloads |
+| Bold, italic, underline, headings (H1–H3), bulleted and numbered lists | ✅ Plus font family, font size, strikethrough, alignment, indent/outdent, quotes, clear formatting. Stored as Tiptap JSON; persists across reloads |
 | Import `.txt` and `.md` into a new editable document | ✅ Type, size (1 MB), and empty-content validation with clear errors. **No `.docx`.** |
 | Owner shares with another authenticated user by email | ✅ Viewer / editor permissions; change and revoke |
 | Owned vs. shared clearly distinguished | ✅ Sidebar views (All / My / Shared with Me) + badges + owner email |
 | Enforced on the server/database | ✅ Supabase RLS + column grants + `SECURITY DEFINER` share function; verified by live tests as a second user |
 | Supabase Auth + Postgres persistence | ✅ Email/password; no service-role key in the app |
-| Tests | ✅ 29 unit/component tests + 7 live RLS integration tests |
+| Tests | ✅ 39 unit/component tests + 7 live RLS integration tests |
 | Docs | ✅ README, ARCHITECTURE, AI_WORKFLOW, this file, screenshots in `docs/screenshots/` |
 | Deployed | ✅ Vercel (production) |
 
 ## Verification performed
 
-- `npm run lint`, `npm run typecheck`, `npm test` (29 passing), `npm run build`: all clean.
+- `npm run lint`, `npm run typecheck`, `npm test` (29 passing), `npm run build`: all clean (39 tests).
 - `npm run test:integration`: **7/7** live RLS tests passing against the production Supabase project.
 - Browser end-to-end run (25 checks) against the local production build: **25/25**.
+- Formatting check on production: imported this repo's `SUBMISSION.md` (relative links become text, absolute links stay); alignment, indent, font family, and size persist after reload.
 - The same E2E run against the deployed URL: **26/26** (adds a check that the recipient sees upgraded editor access).
 
 ## Known limitations
