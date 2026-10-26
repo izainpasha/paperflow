@@ -1,6 +1,7 @@
 import { generateJSON, type JSONContent } from "@tiptap/core";
 import { marked } from "marked";
 import { editorExtensions } from "./extensions";
+import { normalizeContent } from "./formatting";
 import type { ImportKind } from "@/lib/validation";
 
 /** Plain text: blank lines separate paragraphs, single newlines become hard breaks. */
@@ -41,11 +42,12 @@ export function fileTextToDoc(text: string, kind: ImportKind): JSONContent {
 }
 
 /**
- * ProseMirror attrs are not plain objects, and React serialises non-plain objects passed to
- * Server Actions as opaque temporary references ("$T") rather than data. Always send a plain copy.
+ * Plain, server-acceptable copy of editor JSON. ProseMirror attrs are not plain objects (React
+ * would send them to Server Actions as opaque references), and pasted content can carry styles
+ * outside the allow-list. See normalizeContent. Use before every Server Action call.
  */
 export function toPlainJson(doc: JSONContent): JSONContent {
-  return JSON.parse(JSON.stringify(doc)) as JSONContent;
+  return normalizeContent(doc);
 }
 
 /** True when the converted document has no visible text. */

@@ -1,5 +1,12 @@
 import type { JSONContent } from "@tiptap/core";
 import { z } from "zod";
+import {
+  SAFE_HREF,
+  isAllowedAlign,
+  isAllowedFontFamily,
+  isAllowedFontSize,
+  isAllowedIndent,
+} from "@/lib/editor/formatting";
 
 export const TITLE_MAX_LENGTH = 200;
 export const CONTENT_MAX_BYTES = 500_000;
@@ -39,8 +46,8 @@ const ALLOWED_NODES = new Set([
   "hardBreak",
   "horizontalRule",
 ]);
-const ALLOWED_MARKS = new Set(["bold", "italic", "underline", "strike", "code", "link"]);
-const SAFE_HREF = /^(https?:|mailto:)/i;
+const ALLOWED_MARKS = new Set(["bold", "italic", "underline", "strike", "code", "link", "textStyle"]);
+const TEXT_STYLE_ATTRS = new Set(["fontFamily", "fontSize"]);
 const MAX_DEPTH = 40;
 
 function checkMarks(marks: unknown): string | null {
@@ -54,6 +61,13 @@ function checkMarks(marks: unknown): string | null {
       const href = attrs?.href;
       if (typeof href !== "string" || !SAFE_HREF.test(href.trim())) return "links must use http, https or mailto";
     }
+    if (type === "textStyle") {
+      for (const [key, value] of Object.entries(attrs ?? {})) {
+        if (!TEXT_STYLE_ATTRS.has(key) && value != null) return `text style "${key}" is not allowed`;
+      }
+      if (!isAllowedFontFamily(attrs?.fontFamily)) return "unsupported font";
+      if (!isAllowedFontSize(attrs?.fontSize)) return "unsupported font size";
+    }
   }
   return null;
 }
@@ -66,10 +80,10 @@ function checkNode(node: unknown, depth: number): string | null {
   if (attrs !== undefined && (attrs === null || typeof attrs !== "object" || Array.isArray(attrs))) {
     return "attrs must be an object";
   }
-  if (type === "heading") {
-    const level = (attrs as { level?: unknown } | undefined)?.level;
-    if (![1, 2, 3, 4, 5, 6].includes(level as number)) return "invalid heading level";
-  }
+  const nodeAttrs = (attrs ?? {}) as Record<string, unknown>;
+  if (type === "heading" && ![1, 2, 3, 4, 5, 6].includes(nodeAttrs.level as number)) return "invalid heading level";
+  if (!isAllowedAlign(nodeAttrs.textAlign)) return "unsupported text alignment";
+  if (!isAllowedIndent(nodeAttrs.indent)) return "invalid indent";
   if (type === "text") {
     if (typeof text !== "string" || text.length === 0) return "text nodes need non-empty text";
   } else if (text !== undefined) {

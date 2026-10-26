@@ -54,6 +54,32 @@ describe("Toolbar", () => {
     expect(screen.getByRole("button", { name: "Numbered list" })).toHaveAttribute("aria-pressed", "true");
   });
 
+  it("applies font, size, alignment and indentation", async () => {
+    const ed = makeEditor("Styled");
+    render(<Toolbar editor={ed} />);
+    act(() => {
+      ed.commands.selectAll();
+    });
+
+    await userEvent.selectOptions(screen.getByLabelText("Font"), "Georgia");
+    await userEvent.selectOptions(screen.getByLabelText("Font size"), "24");
+    await userEvent.click(screen.getByRole("button", { name: "Align center" }));
+    await userEvent.click(screen.getByRole("button", { name: "Increase indent" }));
+
+    const para = ed.getJSON().content?.[0];
+    expect(para?.attrs).toMatchObject({ textAlign: "center", indent: 1 });
+    expect(para?.content?.[0].marks).toContainEqual({
+      type: "textStyle",
+      attrs: { fontFamily: "Georgia, serif", fontSize: "24px" },
+    });
+    expect(screen.getByRole("button", { name: "Align center" })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: "Decrease indent" })).toBeEnabled();
+
+    await userEvent.click(screen.getByRole("button", { name: "Decrease indent" }));
+    expect(ed.getJSON().content?.[0].attrs?.indent).toBe(0);
+    expect(screen.getByRole("button", { name: "Decrease indent" })).toBeDisabled();
+  });
+
   it("formatting round-trips through JSON, which is what gets persisted", () => {
     const ed = makeEditor("Persist me");
     ed.chain().selectAll().toggleItalic().setHeading({ level: 1 }).run();

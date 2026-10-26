@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { validateDocumentContent } from "@/lib/validation";
 import { isDocEmpty, markdownToDoc, textToDoc } from "./import";
@@ -32,6 +34,25 @@ describe("textToDoc", () => {
 });
 
 describe("markdownToDoc", () => {
+  it("keeps relative links as plain text so the document still passes validation", () => {
+    const doc = markdownToDoc("See [the video](VIDEO_URL.txt), [docs](./README.md#setup) and [site](https://example.com).\n");
+    const json = JSON.stringify(doc);
+    expect(json).toContain("the video");
+    expect(json).not.toContain("VIDEO_URL.txt");
+    expect(json).not.toContain("README.md");
+    expect(json).toContain("https://example.com");
+    expect(validateDocumentContent(doc).ok).toBe(true);
+  });
+
+  it.each(["README.md", "SUBMISSION.md", "ARCHITECTURE.md", "AI_WORKFLOW.md"])(
+    "imports this repo's %s into valid content (tables, relative links, code)",
+    (file) => {
+      const doc = markdownToDoc(readFileSync(resolve(__dirname, "../../..", file), "utf8"));
+      expect(isDocEmpty(doc)).toBe(false);
+      expect(validateDocumentContent(doc)).toMatchObject({ ok: true });
+    },
+  );
+
   it("returns plain objects that survive Server Action serialisation", () => {
     const doc = markdownToDoc("# Title\n");
     const attrs = doc.content?.[0].attrs;
