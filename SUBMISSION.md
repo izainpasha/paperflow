@@ -4,10 +4,10 @@ Ajaia Full Stack Product Engineer assessment: a lightweight collaborative docume
 
 | | |
 |---|---|
-| **Google Drive folder** | **https://drive.google.com/drive/folders/1Azvw194tGR3x4tbeiwVHntFelzeuOZgM?usp=sharing** |
+| **Google Drive folder** | **https://drive.google.com/drive/folders/1Azvw194tGR3x4tbeiwVHntFelzeuOZgM?usp=drive_link** |
 | **Live application** | https://paperflow-five-psi.vercel.app |
 | **GitHub repository** | https://github.com/izainpasha/paperflow |
-| **Walkthrough video** | ⚠️ **PENDING**: not yet recorded. See [VIDEO_URL.txt](VIDEO_URL.txt) |
+| **Walkthrough video** | https://www.awesomescreenshot.com/video/57804376?key=8bea41c54f7ba7ab485d1dd287990041 |
 
 ## Demo accounts
 
