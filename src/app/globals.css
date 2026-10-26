@@ -10,6 +10,21 @@ body {
   color: #0f172a;
 }
 
+/* Tailwind v4 preflight resets buttons to the default cursor; restore pointer affordance. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="tab"],
+  select:not(:disabled),
+  input[type="file"] {
+    cursor: pointer;
+  }
+  button:disabled,
+  select:disabled {
+    cursor: not-allowed;
+  }
+}
+
 /* Editor content styles (Tiptap renders plain semantic HTML). */
 .prose-doc {
   outline: none;
