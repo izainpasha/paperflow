@@ -1,8 +1,9 @@
+import type { JSONContent } from "@tiptap/core";
 import { describe, expect, it } from "vitest";
 import { validateDocumentContent } from "@/lib/validation";
 import { normalizeContent } from "./formatting";
 
-const para = (attrs: Record<string, unknown>, marks?: Record<string, unknown>[]) => ({
+const para = (attrs: Record<string, unknown>, marks?: { type: string; attrs?: Record<string, unknown> }[]): JSONContent => ({
   type: "doc",
   content: [{ type: "paragraph", attrs, content: [{ type: "text", text: "x", ...(marks ? { marks } : {}) }] }],
 });
